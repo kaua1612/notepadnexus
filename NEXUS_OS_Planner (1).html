@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080808">
+  <title>NEXUS_OS | Planner</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080808;
+      --panel: #111111;
+      --panel-2: #171717;
+      --border: #292929;
+      --text: #f5f5f5;
+      --muted: #999999;
+      --accent: #b7a6ff;
+      --danger: #ff7777;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .container { width: min(900px, 100%); margin: 0 auto; padding: 24px 18px 48px; }
+    header {
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: linear-gradient(135deg, #151515, #090909 70%);
+      margin-bottom: 20px;
+    }
+    .brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .brand h1 { margin: 0; font-size: clamp(1.5rem, 5vw, 2rem); letter-spacing: .12em; }
+    .edition { color: var(--muted); font-size: .72rem; letter-spacing: .16em; margin-top: 5px; }
+    .status {
+      border: 1px solid #315d43; color: #9ee6b5; background: #102017;
+      padding: 7px 10px; border-radius: 999px; font-size: .7rem; white-space: nowrap;
+    }
+    header h2 { font-size: clamp(1.35rem, 4vw, 2rem); margin: 28px 0 8px; }
+    header p { color: var(--muted); margin: 0; line-height: 1.6; }
+    .layout { display: grid; grid-template-columns: 1fr; gap: 18px; }
+    .panel {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 16px; padding: 20px;
+    }
+    h3 { margin: 0 0 16px; font-size: 1.05rem; }
+    label { display: block; color: #c8c8c8; font-size: .85rem; margin: 13px 0 7px; }
+    input, select, textarea {
+      width: 100%; border: 1px solid var(--border); border-radius: 10px;
+      background: #090909; color: var(--text); padding: 12px 13px;
+      font: inherit; outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    textarea { min-height: 110px; resize: vertical; line-height: 1.5; }
+    button {
+      border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px;
+      color: var(--text); background: var(--panel-2); font: inherit; cursor: pointer;
+    }
+    button:hover { border-color: #777; }
+    .primary { width: 100%; margin-top: 13px; background: #eee9ff; color: #171321; border-color: #eee9ff; font-weight: 700; }
+    .primary:hover { background: #d9ceff; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .count { color: var(--muted); font-size: .82rem; }
+    .filters { margin: 14px 0 16px; }
+    .notes { display: grid; gap: 10px; }
+    .note {
+      background: #0b0b0b; border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px;
+    }
+    .note-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .tag {
+      display: inline-block; border: 1px solid #42375e; color: #d0c4ff;
+      background: #1a1528; padding: 5px 9px; border-radius: 999px; font-size: .72rem;
+    }
+    .note p { margin: 0; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .delete { color: var(--danger); padding: 6px 9px; font-size: .8rem; }
+    .empty {
+      border: 1px dashed var(--border); border-radius: 12px; padding: 28px 16px;
+      color: var(--muted); text-align: center; line-height: 1.6;
+    }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px; }
+    .actions button { font-size: .82rem; }
+    .hint { color: var(--muted); font-size: .78rem; line-height: 1.5; margin: 14px 0 0; }
+    footer { text-align: center; color: #686868; font-size: .75rem; padding: 22px 8px 0; }
+    @media (min-width: 760px) {
+      .container { padding-top: 38px; }
+      .layout { grid-template-columns:  minmax(270px, .85fr) minmax(0, 1.4fr); align-items: start; }
+      .form-panel { position: sticky; top: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <div class="brand">
+        <div>
+          <h1>NEXUS_OS</h1>
+          <div class="edition">GAMING EDITION / PLANNER</div>
+        </div>
+        <span class="status">PLANEJAMENTO</span>
+      </div>
+      <h2>Seu próximo sistema começa aqui.</h2>
+      <p>Guarde ideias, funcionalidades e configurações para construir a sua própria distribuição Linux.</p>
+    </header>
+
+    <div class="layout">
+      <section class="panel form-panel">
+        <h3>＋ Nova anotação</h3>
+        <form id="noteForm">
+          <label for="category">Categoria</label>
+          <select id="category" required>
+            <option>Interface</option>
+            <option>Configurações</option>
+            <option>Desempenho</option>
+            <option>Aplicativos</option>
+            <option>Segurança</option>
+            <option>Instalação</option>
+            <option>Ideias futuras</option>
+          </select>
+
+          <label for="noteText">O que você deseja adicionar?</label>
+          <textarea id="noteText" maxlength="3000" placeholder="Ex.: Quero uma tela de configurações minimalista, com opções de áudio e vídeo..." required></textarea>
+          <button class="primary" type="submit">Salvar anotação</button>
+        </form>
+        <p class="hint">As anotações são salvas automaticamente neste navegador, neste aparelho. Se limpar os dados do navegador, elas podem ser apagadas.</p>
+        <div class="actions">
+          <button type="button" id="exportBtn">Exportar backup</button>
+          <button type="button" id="importBtn">Importar backup</button>
+          <input type="file" id="importFile" accept="application/json,.json" hidden>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="toolbar">
+          <h3 style="margin:0">Meu planejamento</h3>
+          <span class="count" id="count">0 anotações</span>
+        </div>
+        <div class="filters">
+          <label for="filter" style="margin-top:0">Filtrar por categoria</label>
+          <select id="filter">
+            <option value="Todas">Todas as categorias</option>
+            <option>Interface</option>
+            <option>Configurações</option>
+            <option>Desempenho</option>
+            <option>Aplicativos</option>
+            <option>Segurança</option>
+            <option>Instalação</option>
+            <option>Ideias futuras</option>
+          </select>
+        </div>
+        <div class="notes" id="notesList">
+          <div class="empty">Nenhuma anotação por enquanto.<br>Adicione sua primeira ideia ao lado.</div>
+        </div>
+      </section>
+    </div>
+    <footer>NEXUS_OS GAMING EDITION · CADERNO DE PLANEJAMENTO</footer>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "nexus_os_planner_notes_v1";
+    const form = document.getElementById("noteForm");
+    const categoryInput = document.getElementById("category");
+    const textInput = document.getElementById("noteText");
+    const filterInput = document.getElementById("filter");
+    const notesList = document.getElementById("notesList");
+    const count = document.getElementById("count");
+    const exportBtn = document.getElementById("exportBtn");
+    const importBtn = document.getElementById("importBtn");
+    const importFile = document.getElementById("importFile");
+
+    let notes = loadNotes();
+
+    function loadNotes() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        const parsed = saved ? JSON.parse(saved) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveNotes() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    }
+
+    function renderNotes() {
+      const selectedCategory = filterInput.value;
+      const visibleNotes = notes.filter(note =>
+        selectedCategory === "Todas" || note.category === selectedCategory
+      );
+
+      count.textContent = `${notes.length} ${notes.length === 1 ? "anotação" : "anotações"}`;
+      notesList.replaceChildren();
+
+      if (visibleNotes.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = notes.length === 0
+          ? "Nenhuma anotação por enquanto. Adicione sua primeira ideia."
+          : "Nenhuma anotação nesta categoria.";
+        notesList.appendChild(empty);
+        return;
+      }
+
+      visibleNotes.forEach(note => {
+        const card = document.createElement("article");
+        card.className = "note";
+
+        const top = document.createElement("div");
+        top.className = "note-top";
+
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = note.category;
+
+        const remove = document.createElement("button");
+        remove.className = "delete";
+        remove.type = "button";
+        remove.textContent = "Excluir";
+        remove.setAttribute("aria-label", "Excluir anotação");
+        remove.addEventListener("click", () => {
+          if (confirm("Excluir esta anotação?")) {
+            notes = notes.filter(item => item.id !== note.id);
+            saveNotes();
+            renderNotes();
+          }
+        });
+
+        const paragraph = document.createElement("p");
+        paragraph.textContent = note.text;
+
+        top.append(tag, remove);
+        card.append(top, paragraph);
+        notesList.appendChild(card);
+      });
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      const text = textInput.value.trim();
+      if (!text) return;
+
+      notes.unshift({
+        id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random())),
+        category: categoryInput.value,
+        text,
+        createdAt: new Date().toISOString()
+      });
+
+      saveNotes();
+      textInput.value = "";
+      filterInput.value = "Todas";
+      renderNotes();
+      textInput.focus();
+    });
+
+    filterInput.addEventListener("change", renderNotes);
+
+    exportBtn.addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(notes, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "nexus-os-backup.json";
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+
+    importBtn.addEventListener("click", () => importFile.click());
+
+    importFile.addEventListener("change", async () => {
+      const file = importFile.files[0];
+      if (!file) return;
+
+      try {
+        const imported = JSON.parse(await file.text());
+        if (!Array.isArray(imported) || !imported.every(item =>
+          item && typeof item.text === "string" && typeof item.category === "string"
+        )) {
+          throw new Error("Formato inválido");
+        }
+
+        if (confirm(`Importar ${imported.length} anotações? Isso substituirá as anotações atuais.`)) {
+          notes = imported.map(item => ({
+            id: item.id || String(Date.now() + Math.random()),
+            category: item.category,
+            text: item.text,
+            createdAt: item.createdAt || new Date().toISOString()
+          }));
+          saveNotes();
+          renderNotes();
+        }
+      } catch {
+        alert("Não foi possível importar. Selecione um backup JSON válido do NEXUS_OS Planner.");
+      } finally {
+        importFile.value = "";
+      }
+    });
+
+    renderNotes();
+  </script>
+</body>
+</html>
